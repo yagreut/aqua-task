@@ -61,6 +61,7 @@ Create a `.env` file in the root directory and configure necessary environment v
 
 ```env
 PORT=3000
+USERS_FILE_PATH=users.json
 ```
 
 ## 🏗️ Technologies Used
