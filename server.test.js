@@ -3,9 +3,9 @@ import request from "supertest";
 import app from "./server.js";
 import usersRepository from "./usersRepository.js";
 import usersService from "./usersService.js";
+import dotenv from "dotenv";
 
 // Load environment variables for tests
-import dotenv from "dotenv";
 dotenv.config();
 
 describe("User API", () => {
@@ -20,12 +20,6 @@ describe("User API", () => {
       process.env.USERS_FILE_PATH || "users.json",
       () => true
     );
-  });
-
-  it("GET /health should return status", async () => {
-    const response = await request(app).get("/health");
-    expect(response.status).toBe(200);
-    expect(response.body).toEqual({ status: "ok", initialized: true });
   });
 
   it("GET /users should return all usernames", async () => {
@@ -67,14 +61,13 @@ describe("User API", () => {
     const updatedUser = {
       id: "111111118",
       phone: "0541111111",
-      name: "Alice", // Same name as existing user
+      name: "Alice",
       address: "789 Pine Rd",
     };
     const response = await request(app).post("/users").send(updatedUser);
     expect(response.status).toBe(201);
     expect(response.body).toEqual(updatedUser);
 
-    // Verify overwrite by checking GET /users/Alice
     const getResponse = await request(app).get("/users/Alice");
     expect(getResponse.status).toBe(200);
     expect(getResponse.body).toEqual(updatedUser);

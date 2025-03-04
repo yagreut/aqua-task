@@ -8,36 +8,10 @@ dotenv.config();
 const PORT = process.env.PORT || 3000;
 
 const app = express();
-
 app.use(express.json({ limit: "1kb" })); // Security: Limit payload size
 
-// Health check endpoint
-app.get("/health", (req, res) => {
-  res.json({ status: "ok", initialized: usersService.isInitialized() });
-});
-
-app.get("/users", (req, res) => {
-  const usernames = usersService.getAllUsernames();
-  res.json(usernames);
-});
-
-app.get("/users/:name", (req, res) => {
-  const user = usersService.getUserByName(req.params.name);
-  if (user) {
-    res.json(user);
-  } else {
-    res.status(404).json({ error: "User not found" });
-  }
-});
-
-app.post("/users", (req, res) => {
-  const result = usersService.createUser(req.body);
-  if (result.success) {
-    res.status(201).json(result.user);
-  } else {
-    res.status(400).json({ errors: result.errors });
-  }
-});
+// Mount users service routes at /users
+app.use("/users", usersService.router);
 
 // Start server only after initialization
 async function startServer() {
